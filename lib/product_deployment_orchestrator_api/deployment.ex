@@ -6,9 +6,9 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Deployment do
   Methods and Workflow struct that will be received from (and should be sent to) the WorkflowOrchestrator
   """
 
-  alias OpenAperture.ProductDeploymentOrchestratorApi.Notifications.Publisher, as: NotificationsPublisher
-  alias OpenAperture.ProductDeploymentOrchestratorApi.ProductDeploymentOrchestrator.Publisher, as: WorkflowOrchestratorPublisher
-  alias OpenAperture.ProductDeploymentOrchestratorApi.Request
+  #alias OpenAperture.ProductDeploymentOrchestratorApi.Notifications.Publisher, as: NotificationsPublisher
+  #alias OpenAperture.ProductDeploymentOrchestratorApi.ProductDeploymentOrchestrator.Publisher, as: WorkflowOrchestratorPublisher
+  #alias OpenAperture.ProductDeploymentOrchestratorApi.Request
   alias OpenAperture.ProductDeploymentOrchestratorApi.PlanTreeNode
   alias OpenAperture.ManagerApi
   alias OpenAperture.ManagerApi.Deployment, as: DeploymentApi
@@ -84,7 +84,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Deployment do
     end
   end  
 
-  def update_current_step_status(nil, parent, new_status) do 
+  def update_current_step_status(nil, _parent, _new_status) do 
     nil
   end
 
@@ -131,7 +131,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Deployment do
     IO.puts(appended_output_text)
 
     deployment_update = %{output: Poison.encode!(appended_output_text), completed: deployment.completed}
-    response = DeploymentApi.update_deployment(ManagerApi.get_api(), deployment.product_name, deployment.deployment_id, deployment_update)
+    _response = DeploymentApi.update_deployment(ManagerApi.get_api(), deployment.product_name, deployment.deployment_id, deployment_update)
   end
 
 end

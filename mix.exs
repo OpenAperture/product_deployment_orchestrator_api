@@ -34,8 +34,8 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [
-      {:ex_doc, github: "elixir-lang/ex_doc", only: [:test]},
-      {:markdown, github: "devinus/markdown", only: [:test]},
+      {:ex_doc, "0.7.3", only: :test},
+      {:earmark, "0.1.17", only: :test},
       
       {:poison, "~> 1.3.1", override: true},
       {:openaperture_messaging, git: "https://github.com/OpenAperture/messaging.git", ref: "584353928f56777227ff0d70277ba25ceff725ab", override: true},
