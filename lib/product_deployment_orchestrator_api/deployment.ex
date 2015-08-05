@@ -84,31 +84,35 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Deployment do
     end
   end  
 
-  def update_current_step_status(nil, parent, new_status) do 
+  def update_current_step_status(nil, _parent, _new_status) do 
     nil
   end
 
-  def update_current_step_status(root, parent, new_status) do 
+  def update_current_step_status(root, status) do 
+    update_current_step_status(root, %PlanTreeNode{status: "success"}, "success", status)
+  end
+
+  defp update_current_step_status(root, parent, step_case, new_status) do 
     success_child = nil
     failure_child = nil
 
-    status = case {root.status, parent.status} do
-      {nil, "success"} -> 
+    status = case {root.status, parent.status, step_case} do
+      {nil, "success", "success"} -> 
         new_status
-      {nil, "failure"} -> 
+      {nil, "failure", "failure"} -> 
         new_status
-      {"in_progress", _} -> 
+      {"in_progress", _, _} -> 
         new_status
       _ ->
         root.status
     end
 
     if root.on_success_step_id do
-      success_child = update_current_step_status(root.on_success_step, root, new_status)
+      success_child = update_current_step_status(root.on_success_step, root, "success", new_status)
     end
 
     if root.on_failure_step_id do
-      failure_child = update_current_step_status(root.on_failure_step, root, new_status)
+      failure_child = update_current_step_status(root.on_failure_step, root, "failure", new_status)
     end
 
     %OpenAperture.ProductDeploymentOrchestratorApi.PlanTreeNode{
@@ -125,10 +129,8 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Deployment do
 
   def save(deployment) do 
     response = DeploymentApi.get_deployment(ManagerApi.get_api(), deployment.product_name, deployment.deployment_id)
-    Logger.debug("Response: #{inspect response}")
     current_output_text = Poison.decode!(response.body["output"])
     appended_output_text = current_output_text ++ deployment.output
-    IO.puts(appended_output_text)
 
     deployment_update = %{output: Poison.encode!(appended_output_text), completed: deployment.completed}
     response = DeploymentApi.update_deployment(ManagerApi.get_api(), deployment.product_name, deployment.deployment_id, deployment_update)
