@@ -6,7 +6,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Request do
   """
   
   alias OpenAperture.ProductDeploymentOrchestratorApi.Deployment
-  alias OpenAperture.ProductDeploymentOrchestratorApi.PlanTreeNode
+  #alias OpenAperture.ProductDeploymentOrchestratorApi.PlanTreeNode
 
   defstruct deployment: nil, 
     product_deployment_orchestration_queue: nil,
