@@ -29,9 +29,9 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Request do
 
   OpenAperture.WorkflowOrchestratorApi.Request.t
   """
-  @spec from_payload(Map) :: OpenAperture.WorkflowOrchestratorApi.Request.t
+  @spec from_payload(map) :: t
   def from_payload(payload) do
-    %OpenAperture.ProductDeploymentOrchestratorApi.Request{
+    %__MODULE__{
       deployment: Deployment.from_payload(payload[:deployment]),  
       product_deployment_orchestration_queue: payload[:product_deployment_orchestration_queue],
       product_deployment_orchestration_exchange_id: payload[:product_deployment_orchestration_exchange_id],
@@ -52,7 +52,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Request do
 
   Map
   """
-  @spec to_payload(OpenAperture.ProductDeploymentOrchestratorApi.Request.t) :: Map
+  @spec to_payload(t) :: map
   def to_payload(request) do
     payload = if request.deployment != nil do 
       %{deployment: Deployment.to_payload(request.deployment)}

@@ -9,7 +9,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.PlanTreeNode do
     on_failure_step: nil,
     status: nil
 
-  @type t :: %__MODULE__{}
+  @type t :: %__MODULE__{on_success_step: t, on_failure_step: t, status: String.t, execution_options: map, options: map}
 
   @doc """
   Method to convert a map into a Workflow struct
@@ -22,7 +22,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.PlanTreeNode do
 
   OpenAperture.WorkflowOrchestratorApi.Workflow
   """
-  @spec from_payload(Map) :: OpenAperture.ProductDeploymentOrchestratorApi.PlanTreeNode
+  @spec from_payload(map) :: t
   def from_payload(payload) do
     success_child = nil
     failure_child = nil
@@ -35,7 +35,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.PlanTreeNode do
       failure_child = from_payload(payload[:on_failure_step])
     end
 
-    %OpenAperture.ProductDeploymentOrchestratorApi.PlanTreeNode{
+    %__MODULE__{
       type: payload[:type],
       execution_options: payload[:execution_options],
       options: payload[:options],
@@ -58,7 +58,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.PlanTreeNode do
 
   Map
   """
-  @spec to_payload(OpenAperture.ProductDeploymentOrchestratorApi.PlanTreeNode.t) :: Map
+  @spec to_payload(t) :: map
   def to_payload(root) do
     success_child = nil
     failure_child = nil
