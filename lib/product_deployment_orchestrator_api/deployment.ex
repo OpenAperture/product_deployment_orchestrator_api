@@ -19,7 +19,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Deployment do
             output: nil,
             completed: false
 
-  @type t :: %__MODULE__{}
+  @type t :: %__MODULE__{product_name: String.t, plan_tree: PlanTreeNode.t}
 
   @doc """
   Method to convert a map into a Workflow struct
@@ -32,9 +32,9 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Deployment do
 
   OpenAperture.WorkflowOrchestratorApi.Workflow
   """
-  @spec from_payload(Map) :: OpenAperture.WorkflowOrchestratorApi.Workflow
+  @spec from_payload(map) :: t
   def from_payload(payload) do
-    %OpenAperture.ProductDeploymentOrchestratorApi.Deployment{
+    %__MODULE__{
       product_name: payload[:product_name],
       deployment_id: payload[:deployment_id],
       plan_tree: PlanTreeNode.from_payload(payload[:plan_tree]),
@@ -54,7 +54,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Deployment do
 
   Map
   """
-  @spec to_payload(OpenAperture.WorkflowOrchestratorApi.Workflow.t) :: Map
+  @spec to_payload(t) :: map
   def to_payload(deployment) do
     plan_tree = PlanTreeNode.to_payload(deployment.plan_tree)
 
@@ -67,6 +67,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Deployment do
     }
   end
 
+  @spec determine_current_step(PlanTreeNode.t) :: PlanTreeNode.t | nil
   def determine_current_step(nil) do 
     nil
   end 
@@ -84,14 +85,17 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Deployment do
     end
   end  
 
+  @spec update_current_step_status(PlanTreeNode.t | nil, PlanTreeNode.t, term) :: PlanTreeNode.t | nil
   def update_current_step_status(nil, _parent, _new_status) do 
     nil
   end
 
+  @spec update_current_step_status(PlanTreeNode.t, term) :: PlanTreeNode.t | nil
   def update_current_step_status(root, status) do 
     update_current_step_status(root, %PlanTreeNode{status: "success"}, "success", status)
   end
 
+  @spec update_current_step_status(PlanTreeNode.t, PlanTreeNode.t, String.t, term) :: PlanTreeNode.t | nil
   defp update_current_step_status(root, parent, step_case, new_status) do 
     success_child = nil
     failure_child = nil

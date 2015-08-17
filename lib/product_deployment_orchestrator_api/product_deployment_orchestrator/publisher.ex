@@ -29,7 +29,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.ProductDeploymentOrchest
 
   {:ok, pid} | {:error, reason}
   """
-  @spec start_link() :: {:ok, pid} | {:error, String.t()}   
+  @spec start_link() :: {:ok, pid} | {:error, String.t}   
   def start_link do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
@@ -45,7 +45,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.ProductDeploymentOrchest
 
   :ok | {:error, reason}   
   """
-  @spec execute_orchestration(Request.t) :: :ok | {:error, String.t()}
+  @spec execute_orchestration(Request.t) :: :ok | {:error, String.t}
   def execute_orchestration(request) do
     GenServer.cast(__MODULE__, {:execute_orchestration, request})
   end
@@ -109,7 +109,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.ProductDeploymentOrchest
 
   {:reply, {messaging_exchange_id, machine}, resolved_state}
   """
-  @spec handle_cast({:execute_orchestration, Request.t}, Map) :: {:noreply, Map}
+  @spec handle_cast({:execute_orchestration, Request.t}, map) :: {:noreply, map}
   def handle_cast({:execute_orchestration, request}, state) do
     product_deployment_orchestration_queue = QueueBuilder.build(ManagerApi.get_api, request.product_deployment_orchestration_queue, request.product_deployment_orchestration_exchange_id)
     Logger.debug("queue struct: #{inspect product_deployment_orchestration_queue}")
