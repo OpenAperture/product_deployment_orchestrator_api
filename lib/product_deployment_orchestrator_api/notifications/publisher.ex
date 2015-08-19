@@ -26,7 +26,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Notifications.Publisher 
 
   {:ok, pid} | {:error, reason}
   """
-  @spec start_link() :: {:ok, pid} | {:error, String.t()}   
+  @spec start_link() :: {:ok, pid} | {:error, String.t}   
   def start_link do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
@@ -52,7 +52,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Notifications.Publisher 
 
   :ok | {:error, reason}   
   """
-  @spec hipchat_notification(String.t, String.t, term, String.t(), String.t(), List) :: :ok | {:error, String.t()}
+  @spec hipchat_notification(String.t, String.t, term, String.t, String.t, List) :: :ok | {:error, String.t}
   def hipchat_notification(exchange_id, broker_id, is_success, prefix, message, room_names \\ nil) do
     payload = %{
       is_success: is_success,
@@ -83,7 +83,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Notifications.Publisher 
 
   {:reply, {messaging_exchange_id, machine}, resolved_state}
   """
-  @spec handle_cast({:hipchat, String.t(), String.t(), Map}, Map) :: {:noreply, Map}
+  @spec handle_cast({:hipchat, String.t, String.t, map}, map) :: {:noreply, map}
   def handle_cast({:hipchat, exchange_id, broker_id, payload}, state) do
     hipchat_queue = QueueBuilder.build(ManagerApi.get_api, "notifications_hipchat", exchange_id)
     options = ConnectionOptionsResolver.get_for_broker(ManagerApi.get_api, broker_id)

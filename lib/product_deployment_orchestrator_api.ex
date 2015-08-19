@@ -41,7 +41,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi do
   Note also that the `:transient` type is of little practical use, since when a
   supervision tree terminates, the reason is set to `:shutdown`, not `:normal`.
   """
-  @spec start(atom, [any]) :: :ok | {:error, String.t()}
+  @spec start(atom, [any]) :: Supervisor.on_start
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
     Logger.info("Starting OpenAperture.ProductDeploymentOrchestratorApi...")
