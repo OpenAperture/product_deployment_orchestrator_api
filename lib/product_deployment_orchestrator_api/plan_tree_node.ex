@@ -1,6 +1,7 @@
 defmodule OpenAperture.ProductDeploymentOrchestratorApi.PlanTreeNode do 
 
-  defstruct type: nil,
+  defstruct id: nil, 
+    type: nil,
     execution_options: %{},
     options: %{},
     on_success_step_id: nil,
@@ -36,6 +37,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.PlanTreeNode do
     end
 
     %OpenAperture.ProductDeploymentOrchestratorApi.PlanTreeNode{
+      id: payload[:id],
       type: payload[:type],
       execution_options: payload[:execution_options],
       options: payload[:options],
@@ -73,6 +75,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.PlanTreeNode do
 
 
     %{
+      id: root.id,
       type: root.type,
       execution_options: root.execution_options,
       options: root.options,
