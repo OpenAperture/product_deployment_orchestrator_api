@@ -112,7 +112,6 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.DeploymentStep do
 
     deployment_step_update = %{output: Poison.encode!(appended_output_text), successful: deployment_step.successful, duration: Integer.to_string(duration)}
     response = ProductDeploymentStepApi.update_step(ManagerApi.get_api(), deployment_step.product_name, deployment_step.product_deployment_id, deployment_step.id, deployment_step_update)
-    IO.inspect(response)
     deployment_step = %{ deployment_step | duration: duration}
     %{ deployment_step | updated_at: Date.now}
   end
