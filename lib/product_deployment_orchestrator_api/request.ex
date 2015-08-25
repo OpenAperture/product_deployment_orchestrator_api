@@ -6,9 +6,11 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Request do
   """
   
   alias OpenAperture.ProductDeploymentOrchestratorApi.Deployment
+  alias OpenAperture.ProductDeploymentOrchestratorApi.DeploymentStep
   #alias OpenAperture.ProductDeploymentOrchestratorApi.PlanTreeNode
 
   defstruct deployment: nil, 
+    deployment_step: nil,
     product_deployment_orchestration_queue: nil,
     product_deployment_orchestration_exchange_id: nil,
     product_deployment_orchestration_broker_id: nil,
@@ -33,6 +35,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Request do
   def from_payload(payload) do
     %__MODULE__{
       deployment: Deployment.from_payload(payload[:deployment]),  
+      deployment_step: DeploymentStep.from_payload(payload[:deployment_step]),
       product_deployment_orchestration_queue: payload[:product_deployment_orchestration_queue],
       product_deployment_orchestration_exchange_id: payload[:product_deployment_orchestration_exchange_id],
       product_deployment_orchestration_broker_id: payload[:product_deployment_orchestration_broker_id],
@@ -59,6 +62,13 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Request do
     else
       %{}
     end
+
+    payload = if request.deployment_step != nil do 
+      Map.put(payload, :deployment_step, DeploymentStep.to_payload(request.deployment_step))
+    else
+      Map.put(payload, :deployment_step, nil)
+    end
+
     payload = Map.put(payload, :product_deployment_orchestration_queue, request.product_deployment_orchestration_queue)
     payload = Map.put(payload, :product_deployment_orchestration_exchange_id, request.product_deployment_orchestration_exchange_id)
     payload = Map.put(payload, :product_deployment_orchestration_broker_id, request.product_deployment_orchestration_broker_id)

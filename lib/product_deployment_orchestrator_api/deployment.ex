@@ -2,6 +2,8 @@ require Logger
 
 defmodule OpenAperture.ProductDeploymentOrchestratorApi.Deployment do
 
+  use Timex
+
   @moduledoc """
   Methods and Workflow struct that will be received from (and should be sent to) the WorkflowOrchestrator
   """
@@ -17,7 +19,9 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Deployment do
             deployment_id: nil,
             plan_tree: nil,
             output: nil,
-            completed: false
+            completed: false,
+            duration: nil,
+            updated_at: nil
 
   @type t :: %__MODULE__{product_name: String.t, plan_tree: PlanTreeNode.t}
 
@@ -39,7 +43,9 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Deployment do
       deployment_id: payload[:deployment_id],
       plan_tree: PlanTreeNode.from_payload(payload[:plan_tree]),
       output: payload[:output],
-      completed: payload[:completed]
+      completed: payload[:completed],
+      duration: payload[:duration],
+      updated_at: parse_datetime_from_map(payload[:updated_at])
     }
   end
 
@@ -56,14 +62,17 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Deployment do
   """
   @spec to_payload(t) :: map
   def to_payload(deployment) do
+
     plan_tree = PlanTreeNode.to_payload(deployment.plan_tree)
 
     %{
       product_name: deployment.product_name,
       deployment_id: deployment.deployment_id,
       plan_tree: plan_tree,
-      output: deployment.output,
-      completed: deployment.completed
+      output: [],
+      completed: deployment.completed,
+      duration: deployment.duration,
+      updated_at: parse_datetime_into_map(deployment.updated_at)
     }
   end
 
@@ -120,6 +129,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Deployment do
     end
 
     %OpenAperture.ProductDeploymentOrchestratorApi.PlanTreeNode{
+      id: root.id,
       type: root.type,
       execution_options: root.execution_options,
       options: root.options,
@@ -131,13 +141,32 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Deployment do
     }
   end
 
+  defp parse_datetime_from_map(datetime) do 
+    Date.from({{datetime[:year], datetime[:month], datetime[:day]}, {datetime[:hour], datetime[:min], datetime[:sec]}})
+  end 
+
+  defp parse_datetime_into_map(datetime) do 
+    %{year: datetime.year, month: datetime.month, day: datetime.day, hour: datetime.hour, min: datetime.minute, sec: datetime.second}
+  end 
+
+  defp calculate_duration(updated_at, duration) do 
+    duration_delta = Date.diff(updated_at, Date.now, :secs)
+    duration + duration_delta
+  end 
+
   def save(deployment) do 
     response = DeploymentApi.get_deployment(ManagerApi.get_api(), deployment.product_name, deployment.deployment_id)
     current_output_text = Poison.decode!(response.body["output"])
     appended_output_text = current_output_text ++ deployment.output
 
-    deployment_update = %{output: Poison.encode!(appended_output_text), completed: deployment.completed}
-    _response = DeploymentApi.update_deployment(ManagerApi.get_api(), deployment.product_name, deployment.deployment_id, deployment_update)
+    #Update duration
+    duration = calculate_duration(deployment.updated_at, Integer.parse(response.body["duration"]) |> (fn {duration, _} -> duration end).())
+    output = Poison.encode!(appended_output_text)
+
+    deployment_update = %{output: output, completed: deployment.completed, duration: Integer.to_string(duration)}
+    response = DeploymentApi.update_deployment(ManagerApi.get_api(), deployment.product_name, deployment.deployment_id, deployment_update)
+    deployment = %{ deployment | duration: duration}
+    %{ deployment | updated_at: Date.now}
   end
 
 end

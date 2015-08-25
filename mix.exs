@@ -39,7 +39,8 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.Mixfile do
       
       {:poison, "~> 1.3.1", override: true},
       {:openaperture_messaging, git: "https://github.com/OpenAperture/messaging.git", ref: "3d3a84eabf4ba0a3a827a61c4d99cdbf0ab49a0d", override: true},
-      {:openaperture_manager_api, git: "https://github.com/OpenAperture/manager_api.git", ref: "7bee243e9ae57938b09799ac01a9edc2f722720c", override: true},
+      {:openaperture_manager_api, git: "https://github.com/OpenAperture/manager_api.git", ref: "8f22b612ed97360436008296ecaf8945363d8763", override: true},
+
       {:openaperture_fleet, git: "https://github.com/OpenAperture/fleet.git", ref: "e6bdda3822e8d9c6a382366fbdbbd9238e3a48db", override: true},
       
       {:fleet_api, "~> 0.0.4"},

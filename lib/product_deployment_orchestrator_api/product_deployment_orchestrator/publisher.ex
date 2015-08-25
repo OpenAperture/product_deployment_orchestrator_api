@@ -3,6 +3,8 @@ require Logger
 defmodule OpenAperture.ProductDeploymentOrchestratorApi.ProductDeploymentOrchestrator.Publisher do
   use GenServer
 
+  use Timex
+
   @moduledoc """
   This module contains the logic to publish messages to the WorkflowOrchestrator system module
   """  
@@ -60,11 +62,13 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.ProductDeploymentOrchest
         product_name: "product1",
         deployment_id: 101,
         plan_tree: %PlanTreeNode{
+          id: 4,
           type: "build_deploy",
           options: %{},
           execution_options: %{},
           on_success_step_id: 1,
           on_success_step: %PlanTreeNode{
+            id: 1,
             type: "build_deploy",
             options: %{},
             execution_options: %{},
@@ -76,6 +80,7 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.ProductDeploymentOrchest
           },
           on_failure_step_id: 2,
           on_failure_step: %PlanTreeNode{
+            id: 2,
             type: "build_deploy",
             options: %{},
             execution_options: %{},
@@ -88,6 +93,8 @@ defmodule OpenAperture.ProductDeploymentOrchestratorApi.ProductDeploymentOrchest
           status: nil
         },
         completed: false,
+        duration: 1,
+        updated_at: Date.from({{2015, 8, 21}, {8, 20, 15}})
       },
       step_info: %{}
     }
